@@ -1,0 +1,43 @@
+package ${package}.${moduleName}.entity;
+
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import io.sihuan.updaterecord.annotation.UpdateRecordColumn;
+import io.sihuan.updaterecord.annotation.UpdateRecordId;
+import io.sihuan.updaterecord.annotation.UpdateRecordTable;
+import lombok.Data;
+
+#if(${hasBigDecimal})
+import java.math.BigDecimal;
+#end
+import java.io.Serializable;
+import java.util.Date;
+
+/**
+ * ${comments}
+ * 
+ * @author ${author}
+ * @email ${email}
+ * @date ${datetime}
+ */
+@Data
+@TableName("${tableName}")
+@UpdateRecordTable(name = "${tableName}", value = "${comments}")
+public class ${className}Entity implements Serializable {
+	private static final long serialVersionUID = 1L;
+
+#foreach ($column in $columns)
+	/**
+	 * $column.comments
+	 */
+	#if($column.columnName == $pk.columnName)
+@TableId
+@UpdateRecordId
+	#end
+	#if($column.columnName != $pk.columnName)
+@UpdateRecordColumn(name = "$column.columnName", value = "$column.comments")
+	#end
+	private $column.attrType $column.attrname;
+#end
+
+}

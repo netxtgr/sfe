@@ -1,0 +1,19 @@
+package io.sihuan.dynamicexcel.common;
+
+import lombok.AllArgsConstructor;
+
+/**
+ * @author： liujiangtao
+ **/
+@AllArgsConstructor
+public enum ContextFont {
+    /**
+     *默认内容字体样式
+     */
+    DEFAULT("default"),
+    /**
+     *
+     */
+    TEST("TEST");
+    private String name;
+}

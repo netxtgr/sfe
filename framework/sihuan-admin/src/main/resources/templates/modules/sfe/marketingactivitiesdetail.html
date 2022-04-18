@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+		<#include "/header.html">
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <div class="grid-btn">
+            <div class="row clearfix">
+                <div class="col-md-12 column">
+                    <div class="col-md-4 column">
+                    </div>
+                    <div class="col-md-4 column">
+                    </div>
+                    <div class="col-md-4 column">
+                    </div>
+                </div>
+                <div class="col-md-12 column">
+                    <div class="form-group col-md-4">
+                    </div>
+                    <div class="form-group col-md-4">
+                    </div>
+                    <div class="form-group col-md-4">
+                    </div>
+                </div>
+                <div class="col-md-12 column">
+                    <div class="form-group col-md-4">
+                    </div>
+                    <div class="form-group col-md-4">
+                    </div>
+                    <div class="form-group col-md-4">
+                    </div>
+                </div>
+                <div class="col-md-12 column">
+                    <div class="form-group col-sm-12">
+                        <a class="btn btn-default" @click="query">查询</a>
+                        <#if shiro.hasPermission("sfe:marketingactivitiesdetail:save")>
+                        <a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+                        </#if>
+                        <#if shiro.hasPermission("sfe:marketingactivitiesdetail:update")>
+                        <a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+                        </#if>
+                        <#if shiro.hasPermission("sfe:marketingactivitiesdetail:delete")>
+                        <a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+                        </#if>
+                        <#if shiro.hasPermission("sfe:marketingactivitiesdetail:import")>
+                        <a class="btn btn-primary" data-toggle="modal" data-target="#importModal"><i class="fa fa-plus"></i>&nbsp;导入</a>
+                        </#if>
+                        <a class="btn btn-primary" @click="exportExcel"><i class="fa fa-arrow-circle-right"></i>&nbsp;导出</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <table id="jqGrid"></table>
+        <div id="jqGridPager"></div>
+    </div>
+
+    <div v-show="!showList" class="panel panel-default">
+        <div class="panel-heading">{{title}}</div>
+        <form class="form-horizontal">
+														                    <div class="form-group">
+                        <div class="col-sm-2 control-label">活动标识</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="marketingActivitiesDetail.activityId" placeholder="活动标识"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">活动名称</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="marketingActivitiesDetail.activityName" placeholder="活动名称"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">活动状态（未开始|进行中|已结束）</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="marketingActivitiesDetail.status" placeholder="活动状态（未开始|进行中|已结束）"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">活动反馈</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="marketingActivitiesDetail.feedback" placeholder="活动反馈"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">反馈人编号</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="marketingActivitiesDetail.creatorCode" placeholder="反馈人编号"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">反馈人姓名</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="marketingActivitiesDetail.creatorName" placeholder="反馈人姓名"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">反馈时间</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="marketingActivitiesDetail.created" placeholder="反馈时间"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">关联图片标识</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="marketingActivitiesDetail.imageId" placeholder="关联图片标识"/>
+                        </div>
+                    </div>
+							            <div class="form-group">
+                <div class="col-sm-2 control-label"></div>
+                <input type="button" class="btn btn-primary" id="btnSaveOrUpdate" data-loading-text="保存中..." @click="saveOrUpdate" value="确定"/>
+                &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="${request.contextPath}/statics/js/modules/sfe/marketingactivitiesdetail.js?_${.now?long}"></script>
+</body>
+</html>

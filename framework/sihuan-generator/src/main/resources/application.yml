@@ -1,0 +1,53 @@
+server:
+  port: 8082
+  servlet:
+    context-path: /sihuan-generator
+
+
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    #MySQL配置
+    driverClassName: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://localhost:3306/sihuan_material?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false
+#    username: root
+#    password: admin
+    url: jdbc:mysql://localhost:3306/sihuan_security?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false
+    username: root
+    password: 23456789
+    #oracle配置
+#    driverClassName: oracle.jdbc.OracleDriver
+#    url: jdbc:oracle:thin:@192.168.18.156:1521:orcl
+#    username: jderptest
+#    password: jderp
+    #SQLServer配置
+#    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+#    url: jdbc:sqlserver://192.168.18.71:1433; DatabaseName=finance
+#    username: ekp
+#    password: abcABC123
+    #PostgreSQL配置
+#    driverClassName: org.postgresql.Driver
+#    url: jdbc:postgresql://192.168.10.10:5432/sihuan_security
+#    username: postgres
+#    password: 123456
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+  resources:
+    static-locations: classpath:/static/,classpath:/views/
+
+
+mybatis:
+  mapperLocations: classpath:mapper/**/*.xml
+
+
+pagehelper:
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
+
+#指定数据库，可选值有【mysql、oracle、sqlserver、postgresql】
+sihuan:
+  database: mysql
+#  database: oracle

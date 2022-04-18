@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.sihuan.modules.attendance.dao.AttendanceReportColumnDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.sihuan.modules.attendance.entity.AttendanceReportColumnEntity" id="attendanceReportColumnMap">
+        <result property="id" column="id"/>
+        <result property="colId" column="col_id"/>
+        <result property="colName" column="col_name"/>
+        <result property="entityName" column="entity_name"/>
+        <result property="entityType" column="entity_type"/>
+    </resultMap>
+
+
+</mapper>

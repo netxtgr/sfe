@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.sihuan.modules.attendance.dao.AttendanceDailyDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.sihuan.modules.attendance.entity.AttendanceDailyEntity" id="attendanceDailyMap">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="attDate" column="att_date"/>
+        <result property="attClass" column="att_class"/>
+        <result property="shouldAttendance" column="should_attendance"/>
+        <result property="onDutyUserCheckTime" column="on_duty_user_check_time"/>
+        <result property="onDutyUserCheckResult" column="on_duty_user_check_result"/>
+        <result property="offDutyUserCheckTime" column="off_duty_user_check_time"/>
+        <result property="offDutyUserCheckResult" column="off_duty_user_check_result"/>
+        <result property="isAbsenteeism" column="is_absenteeism"/>
+        <result property="isLate" column="is_late"/>
+        <result property="isLeaveEarly" column="is_leave_early"/>
+        <result property="isSeriousLate" column="is_serious_late"/>
+        <result property="attResult" column="att_result"/>
+        <result property="created" column="created"/>
+        <result property="updated" column="updated"/>
+    </resultMap>
+
+    <select id="selectMonthAtts" resultType="io.sihuan.modules.attendance.entity.AttendanceDailyEntity" parameterType="java.util.Map">
+        select td.id, td.user_id,td.att_date, td.att_class,
+               td.att_class_on_time, td.att_class_off_time,
+               td.should_attendance, td.on_duty_user_check_time,
+               td.on_duty_user_check_result,
+               td.off_duty_user_check_time,
+               td.off_duty_user_check_result,
+               td.is_absenteeism,
+               td.is_late,
+               td.is_leave_early,
+               td.is_serious_late,
+               td.is_absenteeism_late,
+               td.att_result,
+               tp.fd_id as oa_user_id
+        from tb_attendance_daily td
+         inner join tb_attendance_user u on td.user_id = u.user_id
+         inner join tb_attendance_report_group g on u.group_id = g.group_id
+         inner join tb_oa_person tp on tp.mobile_phone != '' and u.mobile_phone = tp.mobile_phone
+        where td.att_date between '${params.startDate}' and '${params.endDate}'
+
+    </select>
+
+    <select id="reportAtts" resultType="io.sihuan.modules.attendance.vo.AttendanceReportVO" parameterType="java.util.Map">
+        select t.company_name, t.dept_name, t.emp_name, t.oa_user_id, t.user_id,
+               t.ycc_sum,
+               t.sjcc_sum,
+               t.kg_sum,
+               t.qk_sum,
+               t.cd_zt_sum,
+               t.tx_ours,
+               t.nj_days,
+               t.bj_ours,
+               format(t.bj_ours/8, 1) as bj_days,
+               t.shij_ours,
+               format(t.shij_ours/8, 1) as shij_days,
+               t.hj_days,
+               t.cjj_days,
+               t.cj_days,
+               t.jyj_days,
+               t.pcj_days,
+               t.shangj_days,
+               t.gsj_days,
+               format(format(t.tx_ours/8, 1) + nj_days + format(t.bj_ours/8, 1) + format(t.shij_ours/8, 1)
+                          + t.hj_days + t.cjj_days + t.cj_days + t.jyj_days + t.pcj_days + t.shangj_days
+                          + t.gsj_days, 1) as sum_leave_days,
+
+               format(t.tx_ours + (nj_days * 8)  + t.bj_ours + t.shij_ours
+                          + (t.hj_days * 8) + (t.cjj_days * 8) + (t.cj_days * 8) + (t.jyj_days * 8) + (t.pcj_days * 8)
+                          + (t.shangj_days * 8)
+                          + (t.gsj_days * 8), 1) as sum_leave_ours,
+               t.jb_ours,
+               t.cc_days
+        from (
+             select tp.company_name, tp.dept_name, u.emp_name, tp.fd_id as oa_user_id, td.user_id,
+                    max(t.should_attendance) as ycc_sum,
+                    sum(case when td.calc_type not in ('0', '5', '6', '9', '12') then 1 else 0 end) sjcc_sum,
+                    sum(case when td.calc_type = '6' then 1 else 0 end) kg_sum,
+                    sum(case when td.calc_type = '9' then 1 else 0 end) qk_sum,
+                    sum(case when td.calc_type in ('7', '8', '10', '11') then 1 else 0 end) cd_zt_sum,
+                    sum(case when td.calc_type = '5' and (td.oa_leave_type = '0A' or td.oa_leave_type like '%加班调休%') then td.oa_leave_times else 0 end) as tx_ours,
+                    format(sum(case when td.calc_type = '5' and (td.oa_leave_type = '06' or td.oa_leave_type like '%年假%') then td.oa_leave_times else 0 end) / 8.0, 1) as nj_days,
+                    sum(case when td.calc_type = '5' and (td.oa_leave_type = '02' or td.oa_leave_type like '%病假%') then td.oa_leave_times else 0 end) as bj_ours,
+                    sum(case when td.calc_type = '5' and (td.oa_leave_type = '01' or td.oa_leave_type like '%事假%') then td.oa_leave_times else 0 end) as shij_ours,
+                    format(sum(case when td.calc_type = '5' and (td.oa_leave_type = '04' or td.oa_leave_type like '%婚假%') then td.oa_leave_times else 0 end) / 8, 1) as hj_days,
+                    format(sum(case when td.calc_type = '5' and (td.oa_leave_type = '09' or td.oa_leave_type like '%产检%') then td.oa_leave_times else 0 end) / 8, 1) as cjj_days,
+                    format(sum(case when td.calc_type = '5' and (td.oa_leave_type = '03' or td.oa_leave_type like '%产假%') then td.oa_leave_times else 0 end) / 8, 1) as cj_days,
+                    format(sum(case when td.calc_type = '5' and (td.oa_leave_type = '0B' or td.oa_leave_type like '%节育假%') then td.oa_leave_times else 0 end) / 8, 1) as jyj_days,
+                    format(sum(case when td.calc_type = '5' and (td.oa_leave_type = '0C' or td.oa_leave_type like '%陪产假%') then td.oa_leave_times else 0 end) / 8, 1) as pcj_days,
+                    format(sum(case when td.calc_type = '5' and (td.oa_leave_type = '08' or td.oa_leave_type like '%丧假%') then td.oa_leave_times else 0 end) / 8, 1) as shangj_days,
+                    format(sum(case when td.calc_type = '5' and (td.oa_leave_type = '07' or td.oa_leave_type like '%工伤假%') then td.oa_leave_times else 0 end) / 8, 1) as gsj_days,
+                    sum(case when td.calc_type = '12' then td.jb_times else 0 end) as jb_ours,
+                    format(sum(case when td.calc_type = '3' then td.cc_times else 0 end) / 8, 1) as cc_days
+             from tb_attendance_daily td
+              inner join tb_attendance_user u on td.user_id = u.user_id
+              inner join tb_attendance_report_group g on u.group_id = g.group_id
+              inner join tb_oa_person tp on tp.mobile_phone != '' and u.mobile_phone = tp.mobile_phone
+              inner join (
+                select max(should_attendance) as should_attendance
+                from (
+                    select sum(should_attendance) as should_attendance
+                    from tb_attendance_daily
+                    where DATE_FORMAT(att_date,'%Y-%m') = '${params.selMonth}'
+                    group by user_id
+                ) t
+              ) t on 1 = 1
+             where DATE_FORMAT(td.att_date,'%Y-%m') = '${params.selMonth}'
+             <if test=" params.companyName != null and params.companyName != ''">
+                and tp.company_name like concat('%','${params.companyName}','%')
+             </if>
+            <if test=" params.empName != null and params.empName != ''">
+                and u.emp_name like concat('%','${params.empName}','%')
+            </if>
+             group by tp.company_name, tp.dept_name, u.emp_name, tp.fd_id, td.user_id
+        ) t
+        order by company_name, convert(emp_name using gbk)
+    </select>
+    <select id="reportAttDetail" resultType="io.sihuan.modules.attendance.vo.AttendanceReportDetailVO" parameterType="java.util.Map">
+        select *
+        from (
+            select  tp.company_name, tp.dept_name, u.emp_name, DATE_FORMAT(td.att_date,'%Y-%m-%d') as att_date,
+                    case when td.should_attendance = 1 then '是' else '否' end as should_attendance,
+                    td.on_duty_user_check_time as on_duty_time,
+                    td.off_duty_user_check_time as of_duty_time,
+                    case when calc_type = '0' then '休息'
+                    when calc_type = '1' then 'OA-非正常考勤'
+                    when calc_type = '3' then 'OA-出差'
+                    when calc_type = '4' then 'OA-外出'
+                    when calc_type = '5' then 'OA-请假'
+                    when calc_type = '6' then '旷工'
+                    when calc_type = '7' then '旷工迟到'
+                    when calc_type = '8' then '严重迟到'
+                    when calc_type = '9' then '缺卡'
+                    when calc_type = '10' then '迟到'
+                    when calc_type = '11' then '早退'
+                    when calc_type = '12' then '加班'
+                    when calc_type in ('0', '-1', '13') then '正常'
+                    else '' end as calc_type,
+                    case when td.calc_type = '5' and (td.oa_leave_type = '0A' or td.oa_leave_type like '%加班调休%') then '调休'
+                    when td.calc_type = '5' and (td.oa_leave_type = '06' or td.oa_leave_type like '%年假%')  then '年假'
+                    when td.calc_type = '5' and (td.oa_leave_type = '02' or td.oa_leave_type like '%病假%') then '病假'
+                    when td.calc_type = '5' and (td.oa_leave_type = '01' or td.oa_leave_type like '%事假%') then '事假'
+                    when td.calc_type = '5' and (td.oa_leave_type = '04' or td.oa_leave_type like '%婚假%') then '婚假'
+                    when td.calc_type = '5' and (td.oa_leave_type = '09' or td.oa_leave_type like '%产检%') then '产检假'
+                    when td.calc_type = '5' and (td.oa_leave_type = '03' or td.oa_leave_type like '%产假%') then '产假'
+                    when td.calc_type = '5' and (td.oa_leave_type = '0B' or td.oa_leave_type like '%节育假%') then '节育假'
+                    when td.calc_type = '5' and (td.oa_leave_type = '0C' or td.oa_leave_type like '%陪产假%') then '陪产假'
+                    when td.calc_type = '5' and (td.oa_leave_type = '08' or td.oa_leave_type like '%丧假%') then '丧假'
+                    when td.calc_type = '5' and (td.oa_leave_type = '07' or td.oa_leave_type like '%工伤假%') then '工伤假'
+                    when td.calc_type = '5' and (td.oa_leave_type = '05' or td.oa_leave_type like '%哺乳假%') then '哺乳假'
+                    when td.calc_type = '5' and (td.oa_leave_type like '%探亲假%') then '探亲假'
+                    else '' end as oa_leave_type,
+                    case when td.calc_type = '5' then td.oa_leave_times end as oa_leave_times,
+                    case when td.calc_type = '4' then td.wc_times end as wc_times,
+                    case when td.calc_type = '3' then td.cc_times end as cc_times,
+                    td.jb_times
+            from tb_attendance_daily td
+            inner join tb_attendance_user u on td.user_id = u.user_id
+            inner join tb_attendance_report_group g on u.group_id = g.group_id
+            inner join tb_oa_person tp on tp.mobile_phone != '' and u.mobile_phone = tp.mobile_phone
+            where 1=1
+            <if test=" params.companyName != null and params.companyName != ''">
+                and tp.company_name like concat('%','${params.companyName}','%')
+            </if>
+            <if test=" params.empName != null and params.empName != ''">
+                and u.emp_name like concat('%','${params.empName}','%')
+            </if>
+            <if test=" params.startDate != null and params.startDate != ''">
+                and td.att_date &gt;= '${params.startDate}'
+            </if>
+            <if test=" params.endDate != null and params.endDate != ''">
+                and td.att_date &lt;= '${params.endDate}'
+            </if>
+            <if test=" params.selMonth != null and params.selMonth != ''">
+                and DATE_FORMAT(att_date,'%Y-%m') = '${params.selMonth}'
+            </if>
+            <if test=" params.userId != null and params.userId != ''">
+                and td.user_Id = '${params.userId}'
+            </if>
+        ) t
+        where 1=1
+        <if test=" params.calcType != null and params.calcType != ''">
+            and calc_type like concat('%','${params.calcType}','%')
+        </if>
+        order by att_date, emp_name
+    </select>
+
+</mapper>

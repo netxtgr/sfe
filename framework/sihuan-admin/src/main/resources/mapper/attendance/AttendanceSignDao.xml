@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.sihuan.modules.attendance.dao.AttendanceSignDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.sihuan.modules.attendance.entity.AttendanceSignEntity" id="attendanceSignMap">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="checkinTime" column="checkin_time"/>
+        <result property="place" column="place"/>
+        <result property="detailPlace" column="detail_place"/>
+        <result property="created" column="created"/>
+    </resultMap>
+
+    <select id="listAttSign" resultType="io.sihuan.modules.attendance.entity.AttendanceSignEntity">
+        select user_id, checkin_time
+        from tb_attendance_sign
+        where checkin_time >= date_add(now(), interval -65 day)
+    </select>
+
+
+</mapper>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.sihuan.modules.sfe.dao.TerminalLinkmanDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.sihuan.modules.sfe.entity.TerminalLinkmanEntity" id="terminalLinkmanMap">
+        <result property="id" column="id"/>
+        <result property="linkmanName" column="linkman_name"/>
+        <result property="gender" column="gender"/>
+        <result property="mobile" column="mobile"/>
+        <result property="nativePlace" column="native_place"/>
+        <result property="divisionNumber" column="division_number"/>
+        <result property="divisionName" column="division_name"/>
+        <result property="position" column="position"/>
+        <result property="onJob" column="on_job"/>
+        <result property="creatorCode" column="creator_code"/>
+        <result property="creatorName" column="creator_name"/>
+        <result property="created" column="created"/>
+        <result property="valid" column="valid"/>
+    </resultMap>
+
+
+</mapper>

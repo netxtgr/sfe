@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.sihuan.modules.sfe.dao.AgentMeetingDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.sihuan.modules.sfe.entity.AgentMeetingEntity" id="agentMeetingMap">
+        <result property="id" column="id"/>
+        <result property="agentNumber" column="agent_number"/>
+        <result property="agentName" column="agent_name"/>
+        <result property="divisionNumber" column="division_number"/>
+        <result property="divisionName" column="division_name"/>
+        <result property="meetingName" column="meeting_name"/>
+        <result property="topic" column="topic"/>
+        <result property="number" column="number"/>
+        <result property="meetingTime" column="meeting_time"/>
+        <result property="summary" column="summary"/>
+        <result property="creatorCode" column="creator_code"/>
+        <result property="creatorName" column="creator_name"/>
+        <result property="created" column="created"/>
+    </resultMap>
+
+
+</mapper>

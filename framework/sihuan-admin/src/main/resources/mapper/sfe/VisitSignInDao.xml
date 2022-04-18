@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.sihuan.modules.sfe.dao.VisitSignInDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.sihuan.modules.sfe.entity.VisitSignInEntity" id="visitSignInMap">
+        <result property="id" column="id"/>
+        <result property="divisionNumber" column="division_number"/>
+        <result property="divisionName" column="division_name"/>
+        <result property="terminalAddress" column="terminal_address"/>
+        <result property="coordinate" column="coordinate"/>
+        <result property="signInTime" column="sign_in_time"/>
+        <result property="creatorCode" column="creator_code"/>
+        <result property="creatorName" column="creator_name"/>
+        <result property="mobile" column="mobile"/>
+        <result property="imageId" column="image_id"/>
+    </resultMap>
+
+
+</mapper>

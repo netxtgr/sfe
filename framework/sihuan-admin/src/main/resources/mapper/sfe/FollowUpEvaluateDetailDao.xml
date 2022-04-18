@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.sihuan.modules.sfe.dao.FollowUpEvaluateDetailDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.sihuan.modules.sfe.entity.FollowUpEvaluateDetailEntity" id="followUpEvaluateDetailMap">
+        <result property="id" column="id"/>
+        <result property="followUpEvaluateId" column="follow_up_evaluate_id"/>
+        <result property="evaluateType" column="evaluate_type"/>
+        <result property="itemCode" column="item_code"/>
+        <result property="itemName" column="item_name"/>
+        <result property="score" column="score"/>
+        <result property="description" column="description"/>
+        <result property="created" column="created"/>
+    </resultMap>
+
+
+</mapper>

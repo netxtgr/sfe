@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>考勤统计</title>
+		<#include "/header.html">
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <div class="grid-btn">
+            <div class="form-group col-sm-2">
+                <div class='input-group date' id='datetimepicker1'>
+                    <input type='text' id="selMonth" class="form-control" v-model="q.selMonth" placeholder="选择月份"/>
+                    <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+            <div class="form-group col-sm-2">
+                <input type="text" class="form-control" v-model="q.companyName" placeholder="考勤统计单位名称">
+            </div>
+            <div class="form-group col-sm-2">
+                <input type="text" class="form-control" v-model="q.empName" placeholder="姓名">
+            </div>
+            <!--<div class="form-group col-sm-2">
+                <div class='input-group date' id='datetimepicker2'>
+                    <input type='text' class="form-control" v-model="q.startDate" placeholder="结束日期"/>
+                    <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>-->
+            <a class="btn btn-default" @click="query">查询</a>
+            <a class="btn btn-primary" @click="exportExcel"><i class="fa fa-arrow-circle-right"></i>&nbsp;导出</a>
+        </div>
+        <table id="jqGrid" ></table>
+        <div id="jqGridPager"></div>
+    </div>
+
+    <div class="container" v-show="detailShow">
+        <div class="row clearfix">
+            <h3 class="text-info text-center">
+                考勤明细查看
+            </h3>
+            <div class="form-group">
+                <div class="col-sm-11 control-label"></div>
+                <input type="button" class="btn btn-warning" @click="detailCancle" value="返回"/>
+            </div>
+            <div class="col-md-12 column">
+                <table class="table table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th>姓名</th>
+                        <th>考勤日期</th>
+                        <th>应出勤</th>
+                        <th>上班时间</th>
+                        <th>下班时间</th>
+                        <th>考勤情况</th>
+                        <th>请假类型</th>
+                        <th>请假时长</th>
+                        <th>外出时长</th>
+                        <th>出差时长</th>
+                        <th>加班时长</th>
+                    </tr>
+                    </thead>
+                    <tbody v-for="detail in details" >
+                    <tr>
+                        <td>{{ detail.empName}}</td>
+                        <td>{{ detail.attDate}}</td>
+                        <td>{{ detail.shouldAttendance}}</td>
+                        <td>{{ detail.onDutyTime}}</td>
+                        <td>{{ detail.ofDutyTime}}</td>
+                        <td>{{ detail.calcType}}</td>
+                        <td>{{ detail.oaLeaveType}}</td>
+                        <td>{{ detail.oaLeaveTimes}}</td>
+                        <td>{{ detail.wcTimes}}</td>
+                        <td>{{ detail.ccTimes}}</td>
+                        <td>{{ detail.jbTimes}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="${request.contextPath}/statics/js/modules/attendance/attendancereport.js?_${.now?long}"></script>
+</body>
+</html>

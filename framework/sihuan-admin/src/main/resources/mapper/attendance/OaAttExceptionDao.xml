@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.sihuan.modules.attendance.dao.OaAttExceptionDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.sihuan.modules.attendance.entity.OaAttExceptionEntity" id="oaAttExceptionMap">
+        <result property="id" column="id"/>
+        <result property="oaUserId" column="oa_user_id"/>
+        <result property="wfId" column="wf_id"/>
+        <result property="attDate" column="att_date"/>
+        <result property="onTime" column="on_time"/>
+        <result property="offTime" column="off_time"/>
+        <result property="remark" column="remark"/>
+        <result property="created" column="created"/>
+    </resultMap>
+
+    <select id="selectAttExcetion" resultType="io.sihuan.modules.attendance.entity.OaAttExceptionEntity">
+        select e.fd_id as wf_id,
+               e.fd_faQiRen as oa_user_id,
+               d.fd_riQi as att_date,
+               convert(varchar(10), d.fd_riQi, 120) + ' ' + CONVERT(varchar(100), d.fd_shangBanShiJian, 8) as on_time,
+               convert(varchar(10), d.fd_riQi, 120) + ' ' + CONVERT(varchar(100), d.fd_xiaBanShiJian, 8) as off_time,
+               d.fd_yiChangYuanYin as remark,
+               'jt' as oa_wf_type
+        from ekp_att_exception e
+        inner join ekp_att_exception_detail d on e.fd_id = d.fd_parent_id
+        inner join km_review_main m on e.fd_id = m.fd_id
+        where d.fd_riQi >= getdate() - 65 and m.doc_status = '30'
+        union all
+        select e.fd_id as wf_id,
+               e.fd_faQiRen as oa_user_id,
+               d.fd_riQi as att_date,
+               convert(varchar(10), d.fd_riQi, 120) + ' ' + CONVERT(varchar(100), d.fd_shangBanShiJian, 8) as on_time,
+               convert(varchar(10), d.fd_riQi, 120) + ' ' + CONVERT(varchar(100), d.fd_xiaBanShiJian, 8) as off_time,
+               d.fd_yiChangYuanYin as remark,
+               'meiyan' as oa_wf_type
+        from ekp_att_exception_meiyan e
+                 inner join ekp_att_exception_d_meiyan d on e.fd_id = d.fd_parent_id
+                 inner join km_review_main m on e.fd_id = m.fd_id
+        where d.fd_riQi >= getdate() - 65 and m.doc_status = '30'
+    </select>
+
+    <update id="deleteTbAttExcetion" >
+        delete from tb_oa_att_exception where att_date >= date_add(now(), interval -65 day) and wf_id is not null
+    </update>
+
+    <select id="listAttExcetion" resultType="io.sihuan.modules.attendance.entity.OaAttExceptionEntity">
+        select oa_user_id, att_date, on_time, off_time
+        from tb_oa_att_exception
+        where att_date >= date_add(now(), interval -65 day)
+    </select>
+
+</mapper>

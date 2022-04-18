@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+		<#include "/header.html">
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <div class="grid-btn">
+            <div class="row clearfix">
+                <div class="col-md-12 column">
+                    <div class="col-md-4 column">
+                    </div>
+                    <div class="col-md-4 column">
+                    </div>
+                    <div class="col-md-4 column">
+                    </div>
+                </div>
+                <div class="col-md-12 column">
+                    <div class="form-group col-md-4">
+                    </div>
+                    <div class="form-group col-md-4">
+                    </div>
+                    <div class="form-group col-md-4">
+                    </div>
+                </div>
+                <div class="col-md-12 column">
+                    <div class="form-group col-md-4">
+                    </div>
+                    <div class="form-group col-md-4">
+                    </div>
+                    <div class="form-group col-md-4">
+                    </div>
+                </div>
+                <div class="col-md-12 column">
+                    <div class="form-group col-sm-12">
+                        <a class="btn btn-default" @click="query">查询</a>
+                        <#if shiro.hasPermission("sfe:agentmeeting:save")>
+                        <a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+                        </#if>
+                        <#if shiro.hasPermission("sfe:agentmeeting:update")>
+                        <a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+                        </#if>
+                        <#if shiro.hasPermission("sfe:agentmeeting:delete")>
+                        <a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+                        </#if>
+                        <#if shiro.hasPermission("sfe:agentmeeting:import")>
+                        <a class="btn btn-primary" data-toggle="modal" data-target="#importModal"><i class="fa fa-plus"></i>&nbsp;导入</a>
+                        </#if>
+                        <a class="btn btn-primary" @click="exportExcel"><i class="fa fa-arrow-circle-right"></i>&nbsp;导出</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <table id="jqGrid"></table>
+        <div id="jqGridPager"></div>
+    </div>
+
+    <div v-show="!showList" class="panel panel-default">
+        <div class="panel-heading">{{title}}</div>
+        <form class="form-horizontal">
+														                    <div class="form-group">
+                        <div class="col-sm-2 control-label">代理商编号</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="agentMeeting.agentNumber" placeholder="代理商编号"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">代理商名称</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="agentMeeting.agentName" placeholder="代理商名称"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">机构编号</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="agentMeeting.divisionNumber" placeholder="机构编号"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">机构名称</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="agentMeeting.divisionName" placeholder="机构名称"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">会议名称</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="agentMeeting.meetingName" placeholder="会议名称"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">会议内容</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="agentMeeting.topic" placeholder="会议内容"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">会议人数</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="agentMeeting.number" placeholder="会议人数"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">会议时间</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="agentMeeting.meetingTime" placeholder="会议时间"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">会议总结</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="agentMeeting.summary" placeholder="会议总结"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">创建人编号</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="agentMeeting.creatorCode" placeholder="创建人编号"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">创建人姓名</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="agentMeeting.creatorName" placeholder="创建人姓名"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">创建时间</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="agentMeeting.created" placeholder="创建时间"/>
+                        </div>
+                    </div>
+							            <div class="form-group">
+                <div class="col-sm-2 control-label"></div>
+                <input type="button" class="btn btn-primary" id="btnSaveOrUpdate" data-loading-text="保存中..." @click="saveOrUpdate" value="确定"/>
+                &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="${request.contextPath}/statics/js/modules/sfe/agentmeeting.js?_${.now?long}"></script>
+</body>
+</html>

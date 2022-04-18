@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.sihuan.modules.attendance.dao.OaAttJbDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.sihuan.modules.attendance.entity.OaAttJbEntity" id="oaAttJbMap">
+        <result property="id" column="id"/>
+        <result property="oaUserId" column="oa_user_id"/>
+        <result property="wfId" column="wf_id"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="times" column="times"/>
+        <result property="jbType" column="jb_type"/>
+        <result property="remark" column="remark"/>
+        <result property="created" column="created"/>
+    </resultMap>
+
+    <select id="selectAttJb" resultType="io.sihuan.modules.attendance.entity.OaAttJbEntity">
+        select j.fd_faQiRen as oa_user_id,
+               j.fd_id as wf_id,
+               j.fd_jiaBanLeiXing as jb_type,
+               j.fd_shiJiKaiShiShiJian as start_time,
+               j.fd_shiJiJieShuShiJian as end_time,
+               j.fd_shiJiJiaBanShiChang as times,
+               j.fd_jiaBanShiYou as remark,
+               'jt' as oa_wf_type
+        from ekp_16024a7b4d24bb87c513 j
+        inner join km_review_main m on j.fd_id = m.fd_id
+        where m.doc_status = '30' and j.fd_shiJiKaiShiShiJian >= getdate() - 65
+        union all
+        select j.fd_faQiRen as oa_user_id,
+               j.fd_id as wf_id,
+               j.fd_jiaBanLeiXing as jb_type,
+               j.fd_shiJiKaiShiShiJian as start_time,
+               j.fd_shiJiJieShuShiJian as end_time,
+               j.fd_shiJiJiaBanShiChang as times,
+               j.fd_jiaBanShiYou as remark,
+               'meiyan' as oa_wf_type
+        from ekp_jiaban_meiyan j
+        inner join km_review_main m on j.fd_id = m.fd_id
+        where m.doc_status = '30' and j.fd_shiJiKaiShiShiJian >= getdate() - 65
+    </select>
+
+    <update id="deleteTbAttJb" >
+        delete from tb_oa_att_jb where start_time >= date_add(now(), interval -65 day) and wf_id is not null
+    </update>
+
+    <select id="listAttJb" resultType="io.sihuan.modules.attendance.entity.OaAttJbEntity">
+        select oa_user_id, jb_type, start_time, end_time
+        from tb_oa_att_jb
+        where start_time >= date_add(now(), interval -65 day)
+    </select>
+
+</mapper>

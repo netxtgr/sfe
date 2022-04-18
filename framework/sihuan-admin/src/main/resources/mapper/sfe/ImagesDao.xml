@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.sihuan.modules.sfe.dao.ImagesDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.sihuan.modules.sfe.entity.ImagesEntity" id="imagesMap">
+        <result property="id" column="id"/>
+        <result property="imageId" column="image_id"/>
+        <result property="imageName" column="image_name"/>
+        <result property="uri" column="uri"/>
+        <result property="created" column="created"/>
+    </resultMap>
+
+
+</mapper>

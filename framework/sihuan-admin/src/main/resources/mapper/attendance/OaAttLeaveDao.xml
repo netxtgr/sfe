@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.sihuan.modules.attendance.dao.OaAttLeaveDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.sihuan.modules.attendance.entity.OaAttLeaveEntity" id="oaAttLeaveMap">
+        <result property="id" column="id"/>
+        <result property="oaUserId" column="oa_user_id"/>
+        <result property="leaveType" column="leave_type"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="times" column="times"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <select id="selectAttLeave" resultType="io.sihuan.modules.attendance.entity.OaAttLeaveEntity">
+        select fd_xingming as oa_user_id,
+               fd_jiaZhong as leave_type,
+               fd_qingJiaKaiShiShiJian as start_time,
+               fd_qingJiaJieShuShiJian as end_time,
+               fd_qingJiaShiChang as times,
+               e.fd_id as wf_id,
+               fd_beiZhu as remark,
+               'jt' as oa_wf_type
+        from ekp_qingxiujia e
+        inner join km_review_main m on e.fd_id = m.fd_id
+        where m.doc_status = '30' and e.fd_qingJiaKaiShiShiJian >= getdate() - 365
+        union all
+        select fd_xingming as oa_user_id,
+               fd_jiaZhong as leave_type,
+               fd_qingJiaKaiShiShiJian as start_time,
+               fd_qingJiaJieShuShiJian as end_time,
+               fd_qingJiaShiChang as times,
+               e.fd_id as wf_id,
+               fd_beiZhu as remark,
+               'meiyan' as oa_wf_type
+        from ekp_qingxiujia_meiyan e
+        inner join km_review_main m on e.fd_id = m.fd_id
+        where m.doc_status = '30' and e.fd_qingJiaKaiShiShiJian >= getdate() - 365
+    </select>
+
+    <update id="deleteTbAttLeave" >
+        delete from tb_oa_att_leave where start_time >= date_add(now(), interval -365 day) and wf_id is not null
+    </update>
+
+    <select id="listAttLeave" resultType="io.sihuan.modules.attendance.entity.OaAttLeaveEntity">
+        select oa_user_id, leave_type, start_time, end_time
+        from tb_oa_att_leave
+        where start_time >= date_add(now(), interval -365 day)
+    </select>
+
+</mapper>

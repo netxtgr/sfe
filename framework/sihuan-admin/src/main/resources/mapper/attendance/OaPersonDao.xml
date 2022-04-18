@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.sihuan.modules.attendance.dao.OaPersonDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.sihuan.modules.attendance.entity.OaPersonEntity" id="OaPersonMap">
+        <result property="fdId" column="fd_id"/>
+    </resultMap>
+
+    <select id="selectOaPerson" resultType="io.sihuan.modules.attendance.vo.OaPersonInfoVO">
+        SELECT p.fd_id, e.fd_name AS emp_name,
+               p.fd_mobile_no AS mobile_phone, p.fd_email AS email,
+               dept.fd_name AS dept_name,
+               dept2.fd_name as company_name
+        FROM sys_org_person p
+        INNER JOIN sys_org_element e ON p.fd_id = e.fd_id
+        LEFT JOIN sys_org_element dept ON e.fd_parentid = dept.fd_id
+        LEFT JOIN sys_org_element dept2 ON e.fd_parentorgid = dept2.fd_id
+        WHERE e.fd_is_available = 1
+    </select>
+    
+    <update id="truncateTable" parameterType="java.lang.String">
+        truncate table ${tableName};
+    </update>
+
+</mapper>
